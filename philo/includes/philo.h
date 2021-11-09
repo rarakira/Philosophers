@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/08 17:34:14 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/09 14:42:45 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,19 @@
 # define MSG_MEM		"Memory allocation failed\n"
 # define MSG_MUTEX		"Mutex creation failed\n"
 # define MSG_THREAD		"Thread creation failed\n"
+# define FORK			"has taken a fork\n"
+# define EATING			"is eating\n"
+# define SLEEPING		"is sleeping\n"
+# define THINKING		"is thinking\n"
+# define DEATH			"is dead\n"
+
+# define BOLD			"\e[1m"
+# define RED			"\e[1;31m"
+# define YELL			"\e[1;33m"
+# define GREEN			"\e[1;32m"
+# define BLUE			"\e[1;34m"
+# define VIOLT			"\e[1;35m"
+# define END			"\e[0m"
 
 typedef struct			s_fork
 {
@@ -58,13 +71,15 @@ struct			s_info
 	int					time_to_sleep;
 	int					n_must_eat;
 	struct timeval		era_start;
+	pthread_mutex_t		print_mx;
 	t_fork				*forks;
 	t_philo				*philos;
 };
 
 /* philosephers functions */
-int		create_philos(t_philo *phils, t_info *info);
+int		create_philos(t_philo **phils, t_info *info);
 void	printer(char *msg);
+unsigned long long	current_time(t_info *info);
 
 /* libft functions */
 size_t	ft_strlen(const char *str);

@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/08 17:35:21 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/09 14:42:32 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,32 +73,44 @@ void	clean_up(int n, t_fork *forks)
 	}
 }
 
-int	create_forks(t_fork *forks, t_info *info)
+int	create_forks(t_fork **forks, t_info *info)
 {
 	unsigned int	i;
 
 	i = 0;
-	forks = (t_fork *)malloc(sizeof(t_fork) * (info->n_of_phils));
-	if (forks == NULL)
+	*forks = (t_fork *)malloc(sizeof(t_fork) * (info->n_of_phils));
+	if (*forks == NULL)
 	{
 		printer(MSG_MEM);
 		return (0);
 	}
 	while (i < info->n_of_phils)
 	{
-		printf("Fork creation: %d\n", i);
-		if (pthread_mutex_init(&(forks + i)->mutex, NULL) != 0)
+		//printf("Fork creation: %d\n", i);
+		if (pthread_mutex_init(&(*forks + i)->mutex, NULL) != 0)
 		{
-			//printf("MTX ERROR\n");
-			clean_up(i, forks);
-			free(forks);
+			printf("MTX ERROR\n");
+			clean_up(i, *forks);
+			free(*forks);
 			printer(MSG_MUTEX);
 			return (0);
 		}
-		(forks + i)->avail = 1;
+		(*forks + i)->avail = 1;
 		i++;
 	}
 	return (1);
+}
+
+void	wait_for_threads(t_philo **philos, int n)
+{
+	int	i;
+
+	i = 0;
+	while (i < n)
+	{
+		pthread_join((*philos + i)->t_id, NULL);
+		i++;
+	}
 }
 
 int	main(int argc, char **argv)
@@ -110,11 +122,11 @@ int	main(int argc, char **argv)
 		if (!parse_args(&info, argv, argc))
 			return (0);
 		printf("Time started: %ld, %u\n", info.era_start.tv_sec, info.era_start.tv_usec);
-		if (!create_forks(info.forks, &info))
+		if (!create_forks(&info.forks, &info))
 			return (0);
-		if (!create_philos(info.philos, &info))
+		if (!create_philos(&info.philos, &info))
 			return (0);
-		//join_threads();
+		wait_for_threads(&info.philos, info.n_of_phils);
 	}
 	else
 		printer(MSG_NARGS);
