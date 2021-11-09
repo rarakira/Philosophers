@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/09 14:42:45 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/09 14:56:12 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define MSG_MEM		"Memory allocation failed\n"
 # define MSG_MUTEX		"Mutex creation failed\n"
 # define MSG_THREAD		"Thread creation failed\n"
+
 # define FORK			"has taken a fork\n"
 # define EATING			"is eating\n"
 # define SLEEPING		"is sleeping\n"
@@ -40,12 +41,6 @@
 # define VIOLT			"\e[1;35m"
 # define END			"\e[0m"
 
-typedef struct			s_fork
-{
-	pthread_mutex_t		mutex;
-	int					avail;
-}						t_fork;
-
 typedef struct s_info	t_info;
 
 typedef struct			s_philo
@@ -55,12 +50,10 @@ typedef struct			s_philo
 	int					times_ate;
 	unsigned long long	last_ate;
 	unsigned long long	time_of_death;
-	t_fork				*left_f;
-	t_fork				*right_f;
+	pthread_mutex_t		*left_f;
+	pthread_mutex_t		*right_f;
 	pthread_t			t_id;
 	struct s_info		*info;
-	// struct s_philo		*next;
-	// struct s_philo		*prev;
 }						t_philo;
 
 struct			s_info
@@ -72,7 +65,7 @@ struct			s_info
 	int					n_must_eat;
 	struct timeval		era_start;
 	pthread_mutex_t		print_mx;
-	t_fork				*forks;
+	pthread_mutex_t		*fork_mxs;
 	t_philo				*philos;
 };
 

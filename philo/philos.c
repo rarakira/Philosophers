@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/09 14:42:08 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/09 14:55:23 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ void	philo_life(t_philo *philo)
 	while (!philo->is_dead)
 	{
 		// printf("%lld %d trying to pick up 1st fork\n", current_time(philo->info), philo->name);
-		while (pthread_mutex_lock(&philo->left_f->mutex) != 0)
+		while (pthread_mutex_lock(philo->left_f) != 0)
 			printf("ERROR(%d): L_FORK MX is unavail\n", philo->name);
 		// if (!philo->left_f->avail)
 			// printf("ERROR(%d): L_FORK is unavail\n", philo->name);
 		printf("%s%lld %d %s%s", GREEN, current_time(philo->info), philo->name, FORK, END);
 		// printf("%lld %d trying to pick up 2nd fork\n", current_time(philo->info), philo->name);
-		while (pthread_mutex_lock(&philo->right_f->mutex) != 0)
+		while (pthread_mutex_lock(philo->right_f) != 0)
 			printf("ERROR(%d): R_FORK MX is unavail\n", philo->name);
 		// if (!philo->left_f->avail)
 			// printf("ERROR(%d): R_FORK is unavail\n", philo->name);
@@ -63,8 +63,8 @@ void	philo_life(t_philo *philo)
 		usleep(philo->info->time_to_eat * 1000);
 		philo->time_of_death = philo->last_ate + philo->info->time_to_die;
 		philo->times_ate++;
-		pthread_mutex_unlock(&philo->right_f->mutex);
-		pthread_mutex_unlock(&philo->left_f->mutex);
+		pthread_mutex_unlock(philo->right_f);
+		pthread_mutex_unlock(philo->left_f);
 		if (philo->times_ate == philo->info->n_must_eat)
 		{
 			printf("%lld Philo %d has finished eating\n", current_time(philo->info), philo->name);
@@ -86,11 +86,11 @@ int	init_philo(unsigned int i, t_philo *philo, t_info *info)
 	philo->times_ate = 0;
 	philo->last_ate = 0;
 	philo->time_of_death = info->time_to_die;
-	philo->left_f = &info->forks[i];
+	philo->left_f = &info->fork_mxs[i];
 	if (i == info->n_of_phils - 1)
-		philo->right_f = &info->forks[0];
+		philo->right_f = &info->fork_mxs[0];
 	else
-		philo->right_f = &info->forks[i + 1];
+		philo->right_f = &info->fork_mxs[i + 1];
 	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life, (void *)philo) != 0)
 	{
 		//free
