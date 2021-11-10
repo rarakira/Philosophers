@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/09 14:56:12 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/10 11:31:04 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # define SLEEPING		"is sleeping\n"
 # define THINKING		"is thinking\n"
 # define DEATH			"is dead\n"
+# define SUCCESS		"Everyone has finished eating\n"
 
 # define BOLD			"\e[1m"
 # define RED			"\e[1;31m"
@@ -63,7 +64,10 @@ struct			s_info
 	int					time_to_eat;
 	int					time_to_sleep;
 	int					n_must_eat;
+	unsigned int		phils_done;
+	int					g_death;
 	struct timeval		era_start;
+	pthread_mutex_t		monitor_mx;
 	pthread_mutex_t		print_mx;
 	pthread_mutex_t		*fork_mxs;
 	t_philo				*philos;
