@@ -1,7 +1,9 @@
 NAME		=	philo
 
-SRCS		=	main.c				philos.c			\
-				lib.c
+SRCS		=	main.c				lib.c				\
+				philos.c			philos_utils.c		\
+				monitoring.c		print_msgs.c		\
+				clean_and_free.c
 
 OBJS		=	$(SRCS:.c=.o)
 
@@ -18,7 +20,7 @@ all : $(NAME)
 $(NAME) : $(OBJS)
 		$(CC) $(OBJS) -o $(NAME)
 
-%.o : %.c
+%.o : %.c includes/philo.h
 		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 norm:
@@ -30,7 +32,7 @@ clean:
 
 fclean:	clean
 		@$(RM) $(NAME)
-		@rm -rf *.dSYM 
+		@rm -rf *.dSYM
 		@echo "\033[1;38;5;221m*  Philo program removed\033[0m"
 
 re:		fclean all

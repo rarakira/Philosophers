@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 12:04:37 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/10 15:06:46 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,48 +23,20 @@ unsigned long long	current_time(t_info *info)
 		//free all;
 		exit (1);
 	}
-	// printf("\nCurrent time: %ld, %u\n", current.tv_sec, current.tv_usec);
 	res = (current.tv_sec - info->era_start.tv_sec) * 1000;
 	res += (current.tv_usec - info->era_start.tv_usec) / 1000;
-	// printf("Current time: %lld (ms)\n", res);
 	return (res);
-}
-
-int		philo_eats(t_philo *philo)
-{
-	// printf("%lld %d trying to pick up 1st fork\n", current_time(philo->info), philo->name);
-	while (pthread_mutex_lock(philo->left_f) != 0)
-		printf("ERROR(%d): L_FORK MX is unavail\n", philo->name);
-	printf("%s%lld %d %s%s", GREEN, current_time(philo->info), philo->name, FORK, END);
-	// printf("%lld %d trying to pick up 2nd fork\n", current_time(philo->info), philo->name);
-	while (pthread_mutex_lock(philo->right_f) != 0)
-		printf("ERROR(%d): R_FORK MX is unavail\n", philo->name);
-	philo->last_ate = current_time(philo->info);
-	if (philo->last_ate < philo->time_of_death)
-		printf("%s%lld %d %s%s", YELL, philo->last_ate, philo->name, EATING, END);
-	else
-	{
-		philo->is_dead = 1;
-		printf("%s%lld %d %s%s", RED, philo->time_of_death, philo->name, DEATH, END);
-		pthread_mutex_lock(&philo->info->monitor_mx);
-		philo->info->g_death = 1;
-		pthread_mutex_unlock(&philo->info->monitor_mx);
-		return (-1);
-	}
-	philo->time_of_death = philo->last_ate + philo->info->time_to_die;
-	philo->times_ate++;
-	usleep(philo->info->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->right_f);
-	pthread_mutex_unlock(philo->left_f);
-	return (0);
 }
 
 void	philo_life(t_philo *philo)
 {
+	unsigned long long	time_left;
+
 	while (!philo->is_dead && !philo->info->g_death)
 	{
 		if (philo_eats(philo) == -1)
 			break ;
+		philo_sleeps(philo);
 		if (philo->times_ate == philo->info->n_must_eat)
 		{
 			pthread_mutex_lock(&philo->info->monitor_mx);
@@ -73,10 +45,11 @@ void	philo_life(t_philo *philo)
 			//printf("%lld Philo %d has finished eating\n", current_time(philo->info), philo->name);
 			break ;
 		}
-		printf("%s%lld %d %s%s", BLUE, current_time(philo->info), philo->name, SLEEPING, END);
-		usleep(philo->info->time_to_sleep * 1000);
-		printf("%s%lld %d %s%s", VIOLT, current_time(philo->info), philo->name, THINKING, END);
-		usleep(1000);
+		time_left = philo->time_of_death - current_time(philo->info);
+		if (time_left > (unsigned long long)philo->info->time_to_eat)
+			philo_thinks(philo, time_left);
+		else
+			philo_thinks(philo, 1);
 	}
 }
 
@@ -131,3 +104,8 @@ int	create_philos(t_philo **phils, t_info *info)
 	}
 	return (1);
 }
+
+/*
+while (pthread_mutex_lock(philo->left_f) != 0)
+	printf("ERROR(%d): L_FORK MX is unavail\n", philo->name);
+*/

@@ -6,16 +6,11 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 12:02:54 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/10 13:19:45 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	printer(char *msg)
-{
-	write(1, msg, ft_strlen(msg));
-}
 
 int	valid_args(char **argv, int argc)
 {
@@ -70,18 +65,6 @@ int	parse_args(t_info *info, char **argv, int argc)
 	return (1);
 }
 
-void	clean_up(int n, pthread_mutex_t *forks)
-{
-	int	i;
-
-	i = 0;
-	while (i < n)
-	{
-		pthread_mutex_destroy((forks + i));
-		i++;
-	}
-}
-
 int	create_forks(pthread_mutex_t **forks, t_info *info)
 {
 	unsigned int	i;
@@ -99,7 +82,7 @@ int	create_forks(pthread_mutex_t **forks, t_info *info)
 		if (pthread_mutex_init((*forks + i), NULL) != 0)
 		{
 			printf("MTX ERROR\n");
-			clean_up(i, *forks);
+			clean_forks(i, *forks);
 			free(*forks);
 			printer(MSG_MUTEX);
 			return (0);
@@ -119,52 +102,6 @@ void	wait_for_threads(t_philo **philos, int n)
 		pthread_join((*philos + i)->t_id, NULL);
 		i++;
 	}
-}
-
-void	detach_threads(t_philo **philos, int n)
-{
-	int	i;
-
-	i = 0;
-	while (i < n)
-	{
-		pthread_join((*philos + i)->t_id, NULL);
-		i++;
-	}
-}
-
-int	set_monitoring(t_philo **philos, t_info *info)
-{
-	unsigned int	i;
-
-	i = 0;
-	while (!info->g_death && info->n_of_phils != info->phils_done)
-	{
-		// if (i == 0)
-		// 	printf("MONITOR: %d phils done of %d\n", info->phils_done, info->n_of_phils);
-		if ((*philos)[i].times_ate != info->n_must_eat &&
-				(*philos)[i].time_of_death <= current_time(info))
-		{
-			(*philos)[i].is_dead = 1;
-			pthread_mutex_lock(&info->monitor_mx);
-			info->g_death = 1;
-			pthread_mutex_unlock(&info->monitor_mx);
-			break ;
-		}
-		i++;
-		if (i == info->n_of_phils)
-			i = 0;
-	}
-	//detach_threads(philos, info->n_of_phils);
-	printf("MONITOR FIN: %d phils done of %d\n", info->phils_done, info->n_of_phils);
-	if (info->g_death)
-	{
-		printf("%s%lld %d %s%s", RED, (*philos)[i].time_of_death, (*philos)[i].name, DEATH, END);
-		//detach_threads(philos, info->n_of_phils);
-	}
-	else
-		printf("%s%lld %s%s", GREEN, current_time(info), SUCCESS, END);
-	return (0);
 }
 
 int	main(int argc, char **argv)
