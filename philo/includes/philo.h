@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 14:22:37 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/15 20:00:02 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,12 @@ typedef struct s_philo
 	struct s_info		*info;
 }						t_philo;
 
+typedef struct s_fork
+{
+	int					is_avail;
+	pthread_mutex_t		mx;
+}						t_fork;
+
 struct					s_info
 {
 	unsigned int		n_of_phils;
@@ -70,7 +76,7 @@ struct					s_info
 	struct timeval		era_start;
 	pthread_mutex_t		monitor_mx;
 	pthread_mutex_t		print_mx;
-	pthread_mutex_t		*fork_mxs;
+	t_fork				*forks;
 	t_philo				*philos;
 };
 
@@ -79,14 +85,14 @@ int					set_monitoring(t_philo **philos, t_info *info);
 int					create_philos(t_philo **phils, t_info *info);
 int					philo_eats(t_philo *philo);
 void				philo_sleeps(t_philo *philo);
-void				philo_thinks(t_philo *philo, unsigned long long	time_left);
+void				philo_thinks(t_philo *philo, unsigned long long time_left);
 
 /* time and printing functions */
 unsigned long long	current_time(t_info *info);
 void				printer(char *msg);
 
 /* clean up functions */
-void				clean_forks(int n, pthread_mutex_t *forks);
+void				clean_forks(int n, t_fork *forks);
 
 /* libft functions */
 size_t				ft_strlen(const char *str);

@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 15:06:46 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/15 20:01:46 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ void	philo_life(t_philo *philo)
 
 	while (!philo->is_dead && !philo->info->g_death)
 	{
+		time_left = philo->time_of_death - current_time(philo->info);
+		if (philo->name % 2 && time_left > (unsigned long long)philo->info->time_to_eat)
+			philo_thinks(philo, time_left);
+		else if (philo->name % 2)
+			philo_thinks(philo, 1);
 		if (philo_eats(philo) == -1)
 			break ;
 		philo_sleeps(philo);
@@ -46,9 +51,9 @@ void	philo_life(t_philo *philo)
 			break ;
 		}
 		time_left = philo->time_of_death - current_time(philo->info);
-		if (time_left > (unsigned long long)philo->info->time_to_eat)
+		if (philo->name % 2 == 0 && time_left > (unsigned long long)philo->info->time_to_eat)
 			philo_thinks(philo, time_left);
-		else
+		else if (philo->name % 2 == 0)
 			philo_thinks(philo, 1);
 	}
 }
@@ -62,11 +67,11 @@ int	init_philo(unsigned int i, t_philo *philo, t_info *info)
 	philo->times_ate = 0;
 	philo->last_ate = 0;
 	philo->time_of_death = info->time_to_die;
-	philo->left_f = &info->fork_mxs[i];
+	philo->left_f = &info->forks[i].mx;
 	if (i == info->n_of_phils - 1)
-		philo->right_f = &info->fork_mxs[0];
+		philo->right_f = &info->forks[0].mx;
 	else
-		philo->right_f = &info->fork_mxs[i + 1];
+		philo->right_f = &info->forks[i + 1].mx;
 	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life, (void *)philo) != 0)
 	{
 		//free
@@ -77,6 +82,27 @@ int	init_philo(unsigned int i, t_philo *philo, t_info *info)
 	return (1);
 }
 
+int	create_philos(t_philo **phils, t_info *info)
+{
+	unsigned int	i;
+
+	i = 0;
+	*phils = (t_philo *)malloc(sizeof(t_philo) * (info->n_of_phils));
+	if (*phils == NULL)
+	{
+		printer(MSG_MEM);
+		return (0);
+	}
+	while (i < info->n_of_phils)
+	{
+		if (!init_philo(i, (*phils + i), info))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+/*
 int	create_philos(t_philo **phils, t_info *info)
 {
 	unsigned int	i;
@@ -103,7 +129,7 @@ int	create_philos(t_philo **phils, t_info *info)
 		i += 2;
 	}
 	return (1);
-}
+} */
 
 /*
 while (pthread_mutex_lock(philo->left_f) != 0)

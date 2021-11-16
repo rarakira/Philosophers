@@ -6,20 +6,20 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:20:12 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 13:25:51 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/15 19:59:47 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	clean_forks(int n, pthread_mutex_t *forks)
+void	clean_forks(int n, t_fork *forks)
 {
 	int	i;
 
 	i = 0;
 	while (i < n)
 	{
-		pthread_mutex_destroy((forks + i));
+		pthread_mutex_destroy(&(forks + i)->mx);
 		i++;
 	}
 }

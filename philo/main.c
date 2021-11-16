@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 13:19:45 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/15 20:01:03 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,12 @@ int	parse_args(t_info *info, char **argv, int argc)
 	return (1);
 }
 
-int	create_forks(pthread_mutex_t **forks, t_info *info)
+int	create_forks(t_fork **forks, t_info *info)
 {
 	unsigned int	i;
 
 	i = 0;
-	*forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (info->n_of_phils));
+	*forks = (t_fork *)malloc(sizeof(t_fork) * (info->n_of_phils));
 	if (*forks == NULL)
 	{
 		printer(MSG_MEM);
@@ -79,7 +79,8 @@ int	create_forks(pthread_mutex_t **forks, t_info *info)
 	while (i < info->n_of_phils)
 	{
 		//printf("Fork creation: %d\n", i);
-		if (pthread_mutex_init((*forks + i), NULL) != 0)
+		(*forks + i)->is_avail = 1;
+		if (pthread_mutex_init(&(*forks + i)->mx, NULL) != 0)
 		{
 			printf("MTX ERROR\n");
 			clean_forks(i, *forks);
@@ -113,7 +114,7 @@ int	main(int argc, char **argv)
 		if (!parse_args(&info, argv, argc))
 			return (0);
 		//printf("Time started: %ld, %u\n", info.era_start.tv_sec, info.era_start.tv_usec);
-		if (!create_forks(&info.fork_mxs, &info))
+		if (!create_forks(&info.forks, &info))
 			return (0);
 		if (!create_philos(&info.philos, &info))
 			return (0);
@@ -125,3 +126,31 @@ int	main(int argc, char **argv)
 		printer(MSG_NARGS);
 	return (0);
 }
+
+/*
+int	create_forks(pthread_mutex_t **forks, t_info *info)
+{
+	unsigned int	i;
+
+	i = 0;
+	*forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (info->n_of_phils));
+	if (*forks == NULL)
+	{
+		printer(MSG_MEM);
+		return (0);
+	}
+	while (i < info->n_of_phils)
+	{
+		//printf("Fork creation: %d\n", i);
+		if (pthread_mutex_init((*forks + i), NULL) != 0)
+		{
+			printf("MTX ERROR\n");
+			clean_forks(i, *forks);
+			free(*forks);
+			printer(MSG_MUTEX);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+} */

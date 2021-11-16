@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:10:34 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/10 15:06:43 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/15 18:19:28 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	philo_thinks(t_philo *philo, unsigned long long	time_left)
 	pthread_mutex_lock(&philo->info->print_mx);
 	printf("%s%llu %d %s", VIOLT, current_time(philo->info), philo->name, THINKING);
 	pthread_mutex_unlock(&philo->info->print_mx);
-	usleep(time_left * 500);
+	usleep(time_left * 250);
 }
 
 void	philo_sleeps(t_philo *philo)
@@ -31,13 +31,13 @@ void	philo_sleeps(t_philo *philo)
 
 static void	set_philo_dead(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->info->monitor_mx);
+	philo->is_dead = 1;
+	philo->info->g_death = 1;
 	pthread_mutex_lock(&philo->info->print_mx);
 	printf("from philo:\n");
 	printf("%s%llu %d %s", RED, philo->time_of_death, philo->name, DEATH);
 	pthread_mutex_unlock(&philo->info->print_mx);
-	pthread_mutex_lock(&philo->info->monitor_mx);
-	philo->is_dead = 1;
-	philo->info->g_death = 1;
 	pthread_mutex_unlock(&philo->info->monitor_mx);
 	pthread_mutex_unlock(philo->right_f);
 	pthread_mutex_unlock(philo->left_f);
