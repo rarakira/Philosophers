@@ -6,13 +6,13 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/16 13:59:16 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/16 15:23:23 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	valid_args(char **argv, int argc)
+static int	valid_args(char **argv, int argc)
 {
 	int	i;
 	int	j;
@@ -34,7 +34,7 @@ int	valid_args(char **argv, int argc)
 	return (1);
 }
 
-int	parse_args(t_info *info, char **argv, int argc)
+static int	parse_args(t_info *info, char **argv, int argc)
 {
 	if (!valid_args(argv, argc))
 	{
@@ -60,45 +60,6 @@ int	parse_args(t_info *info, char **argv, int argc)
 	return (1);
 }
 
-int	create_forks(t_fork **forks, t_info *info)
-{
-	unsigned int	i;
-
-	i = 0;
-	*forks = (t_fork *)malloc(sizeof(t_fork) * (info->n_of_phils));
-	if (*forks == NULL)
-	{
-		printer(MSG_MEM);
-		return (0);
-	}
-	while (i < info->n_of_phils)
-	{
-		(*forks + i)->is_avail = 1;
-		if (pthread_mutex_init(&(*forks + i)->mx, NULL) != 0)
-		{
-			printf("MTX ERROR\n");
-			clean_forks(i, *forks);
-			free(*forks);
-			printer(MSG_MUTEX);
-			return (0);
-		}
-		i++;
-	}
-	return (1);
-}
-
-void	wait_for_threads(t_philo **philos, int n)
-{
-	int	i;
-
-	i = 0;
-	while (i < n)
-	{
-		pthread_join((*philos + i)->t_id, NULL);
-		i++;
-	}
-}
-
 int	main(int argc, char **argv)
 {
 	t_info	info;
@@ -106,11 +67,11 @@ int	main(int argc, char **argv)
 	if (argc == 5 || argc == 6)
 	{
 		if (!parse_args(&info, argv, argc))
-			return (0);
+			return (1);
 		if (!create_forks(&info.forks, &info))
-			return (0);
+			return (1);
 		if (!create_philos(&info.philos, &info))
-			return (0);
+			return (1);
 		set_monitoring(&info.philos, &info);
 		wait_for_threads(&info.philos, info.n_of_phils);
 		//clean_all() - mxs, 2 arrays
@@ -119,31 +80,3 @@ int	main(int argc, char **argv)
 		printer(MSG_NARGS);
 	return (0);
 }
-
-/*
-int	create_forks(pthread_mutex_t **forks, t_info *info)
-{
-	unsigned int	i;
-
-	i = 0;
-	*forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (info->n_of_phils));
-	if (*forks == NULL)
-	{
-		printer(MSG_MEM);
-		return (0);
-	}
-	while (i < info->n_of_phils)
-	{
-		//printf("Fork creation: %d\n", i);
-		if (pthread_mutex_init((*forks + i), NULL) != 0)
-		{
-			printf("MTX ERROR\n");
-			clean_forks(i, *forks);
-			free(*forks);
-			printer(MSG_MUTEX);
-			return (0);
-		}
-		i++;
-	}
-	return (1);
-} */

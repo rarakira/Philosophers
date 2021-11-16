@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/16 14:20:29 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/16 15:14:20 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_philo
 	t_fork				*right_f;
 	pthread_t			t_id;
 	struct s_info		*info;
+	pthread_mutex_t		mx;
 }						t_philo;
 
 struct s_fork

@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/16 14:48:30 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/16 17:35:53 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,37 +30,6 @@ unsigned long long	current_time(t_info *info)
 
 void	philo_life(t_philo *philo)
 {
-	unsigned long long	time_left;
-
-	while (!philo->is_dead && !philo->info->g_death)
-	{
-		time_left = philo->time_of_death - current_time(philo->info);
-		//think if odd
-		if (philo->name % 2 && time_left > (unsigned long long)philo->info->time_to_eat)
-			philo_thinks(philo, time_left);
-		else if (philo->name % 2)
-			philo_thinks(philo, 1);
-		//eat
-		if (philo_eats(philo) == -1)
-			break ;
-		//sleep
-		philo_sleeps(philo);
-		//set finish
-		if (philo->times_ate == philo->info->n_must_eat)
-		{
-			pthread_mutex_lock(&philo->info->monitor_mx);
-			philo->info->phils_done++;
-			pthread_mutex_unlock(&philo->info->monitor_mx);
-			printf("%lld Philo %d has finished eating\n", current_time(philo->info), philo->name);
-			break ;
-		}
-		time_left = philo->time_of_death - current_time(philo->info);
-		//think if even
-		if (philo->name % 2 == 0 && time_left > (unsigned long long)philo->info->time_to_eat)
-			philo_thinks(philo, time_left);
-		else if (philo->name % 2 == 0)
-			philo_thinks(philo, 1);
-	}
 }
 
 int	init_philo(unsigned int i, t_philo *philo, t_info *info)
@@ -96,9 +65,10 @@ int	create_philos(t_philo **phils, t_info *info)
 	if (*phils == NULL)
 	{
 		printer(MSG_MEM);
+		//free
 		return (0);
 	}
-	if (gettimeofday(&info->era_start, NULL) == -1)
+	if (gettimeofday(&info->era_start, NULL) == -1) // ???
 	{
 		printer(MSG_TIMEERR);
 		return (0);
@@ -111,37 +81,3 @@ int	create_philos(t_philo **phils, t_info *info)
 	}
 	return (1);
 }
-
-/*
-int	create_philos(t_philo **phils, t_info *info)
-{
-	unsigned int	i;
-
-	i = 0;
-	*phils = (t_philo *)malloc(sizeof(t_philo) * (info->n_of_phils));
-	if (*phils == NULL)
-	{
-		printer(MSG_MEM);
-		return (0);
-	}
-	while (i < info->n_of_phils)
-	{
-		if (!init_philo(i, (*phils + i), info))
-			return (0);
-		i += 2;
-	}
-	usleep(1000);
-	i = 1;
-	while (i < info->n_of_phils)
-	{
-		if (!init_philo(i, (*phils + i), info))
-			return (0);
-		i += 2;
-	}
-	return (1);
-} */
-
-/*
-while (pthread_mutex_lock(philo->left_f) != 0)
-	printf("ERROR(%d): L_FORK MX is unavail\n", philo->name);
-*/

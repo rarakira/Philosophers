@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:10:34 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/15 18:19:28 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/16 14:59:08 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,37 +26,107 @@ void	philo_sleeps(t_philo *philo)
 	printf("%s%lld %d %s", BLUE, current_time(philo->info), philo->name, SLEEPING);
 	pthread_mutex_unlock(&philo->info->print_mx);
 	usleep(philo->info->time_to_sleep * 1000);
-	// return (0);
+}
+
+int	still_alife(t_philo *philo)
+{
+	if (current_time(philo->info) < philo->time_of_death)
+		return (1);
+	return (0);
 }
 
 static void	set_philo_dead(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->info->monitor_mx);
+	pthread_mutex_lock(&philo->left_f->mx);
 	philo->is_dead = 1;
+	pthread_mutex_unlock(&philo->left_f->mx);
 	philo->info->g_death = 1;
 	pthread_mutex_lock(&philo->info->print_mx);
 	printf("from philo:\n");
 	printf("%s%llu %d %s", RED, philo->time_of_death, philo->name, DEATH);
 	pthread_mutex_unlock(&philo->info->print_mx);
 	pthread_mutex_unlock(&philo->info->monitor_mx);
-	pthread_mutex_unlock(philo->right_f);
-	pthread_mutex_unlock(philo->left_f);
+}
+
+int	get_left_fork(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->left_f->mx);
+	if (!still_alife(philo))
+	{
+		pthread_mutex_unlock(&philo->left_f->mx);
+		set_philo_dead(philo);
+		return (0);
+	}
+	if (philo->left_f->is_avail)
+	{
+		philo->left_f->is_avail = 0;
+		pthread_mutex_unlock(&philo->left_f->mx);
+		pthread_mutex_lock(&philo->info->print_mx);
+		printf("%s%llu %d %s", GREEN, current_time(philo->info), philo->name, FORK);
+		pthread_mutex_unlock(&philo->info->print_mx);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->left_f->mx);
+	return (0);
+}
+
+int	get_right_fork(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->right_f->mx);
+	if (!still_alife(philo))
+	{
+		pthread_mutex_unlock(&philo->right_f->mx);
+		set_philo_dead(philo);
+		return (0);
+	}
+	if (philo->right_f->is_avail)
+	{
+		philo->right_f->is_avail = 0;
+		pthread_mutex_unlock(&philo->right_f->mx);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->right_f->mx);
+	return (0);
+}
+
+void	return_fork(t_philo *philo, char side)
+{
+	if (side == 'r')
+	{
+		pthread_mutex_lock(&philo->right_f->mx);
+		philo->right_f->is_avail = 1;
+		pthread_mutex_unlock(&philo->right_f->mx);
+	}
+	if (side == 'l')
+	{
+		pthread_mutex_lock(&philo->left_f->mx);
+		philo->left_f->is_avail = 1;
+		pthread_mutex_unlock(&philo->left_f->mx);
+	}
 }
 
 int	philo_eats(t_philo *philo)
 {
-	// printf("%llu %d trying to pick up 1st fork\n", current_time(philo->info), philo->name);
-	pthread_mutex_lock(philo->left_f);
-	pthread_mutex_lock(&philo->info->print_mx);
-	printf("%s%llu %d %s", GREEN, current_time(philo->info), philo->name, FORK);
-	pthread_mutex_unlock(&philo->info->print_mx);
-	// printf("%llu %d trying to pick up 2nd fork\n", current_time(philo->info), philo->name);
-	if (philo->left_f == philo->right_f)
+	while (!get_left_fork(philo))
 	{
+		if (philo->is_dead)
+			return (-1);
+		usleep(100);
+	}
+	// printf("%llu %d trying to pick up 2nd fork\n", current_time(philo->info), philo->name);
+	if (&philo->left_f->mx == &philo->right_f->mx)
+	{
+		pthread_mutex_unlock(&philo->left_f->mx);
 		set_philo_dead(philo);
 		return (-1);
 	}
-	pthread_mutex_lock(philo->right_f);
+	while (!get_right_fork(philo))
+	{
+		if (philo->is_dead)
+			return (-1);
+		usleep(100);
+	}
 	philo->last_ate = current_time(philo->info);
 	if (philo->last_ate < philo->time_of_death)
 	{
@@ -73,7 +143,7 @@ int	philo_eats(t_philo *philo)
 	philo->time_of_death = philo->last_ate + philo->info->time_to_die;
 	philo->times_ate++;
 	usleep(philo->info->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->right_f);
-	pthread_mutex_unlock(philo->left_f);
+	return_fork(philo, 'r');
+	return_fork(philo, 'l');
 	return (0);
 }
