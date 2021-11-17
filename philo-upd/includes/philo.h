@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/16 15:14:20 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/17 21:20:14 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdio.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <string.h>
 
 # define MSG_NARGS		"Wrong number of arguments: should be 4 or 5\n"
 # define MSG_FORMAT		"Wrong formatting: \
@@ -57,8 +58,8 @@ typedef struct s_philo
 	t_fork				*left_f;
 	t_fork				*right_f;
 	pthread_t			t_id;
-	struct s_info		*info;
 	pthread_mutex_t		mx;
+	struct s_info		*info;
 }						t_philo;
 
 struct s_fork
@@ -75,7 +76,7 @@ struct					s_info
 	int					time_to_sleep;
 	int					n_must_eat;
 	unsigned int		phils_done;
-	int					g_death;
+	int					feast_ended;
 	struct timeval		era_start;
 	pthread_mutex_t		monitor_mx;
 	pthread_mutex_t		print_mx;
@@ -85,17 +86,32 @@ struct					s_info
 
 /* philosephers functions */
 int					set_monitoring(t_philo **philos, t_info *info);
+int					init_philos(t_philo **philos, t_info *info);
+int					create_forks(t_fork **forks, t_info *info);
 int					create_philos(t_philo **phils, t_info *info);
+
 int					philo_eats(t_philo *philo);
-void				philo_sleeps(t_philo *philo);
-void				philo_thinks(t_philo *philo, unsigned long long time_left);
+int					philo_sleeps(t_philo *philo);
+int					philo_thinks(t_philo *philo, unsigned long long	time_left);
+
+int					done_eating(t_philo *philo);
+int					still_alife(t_philo *philo);
+int					set_philo_dead(t_philo *philo);
 
 /* time and printing functions */
 unsigned long long	current_time(t_info *info);
+
+void				end_feast(t_info *info);
+int					feast_lasts(t_info *info);
+
 void				printer(char *msg);
 
 /* clean up functions */
-void				clean_forks(int n, t_fork *forks);
+void				clean_f_mxs(int n, t_fork *obj);
+void				clean_p_mxs(int n, t_philo *obj);
+void				clean_all(t_info *info);
+
+void				wait_for_threads(t_philo *philos, int n);
 
 /* libft functions */
 size_t				ft_strlen(const char *str);

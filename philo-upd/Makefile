@@ -2,6 +2,7 @@ NAME		=	philo
 
 SRCS		=	main.c				forks.c				\
 				philos.c			philos_utils.c		\
+				philo_eats.c		philo_activities.c	\
 				monitoring.c		print_msgs.c		\
 				clean_and_free.c	lib.c
 

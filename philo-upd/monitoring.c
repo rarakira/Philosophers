@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:14:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/16 15:08:58 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/17 20:56:21 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,19 @@
 
 int	set_monitoring(t_philo **philos, t_info *info)
 {
-	
+	(void) philos;
+
+	while (feast_lasts(info))
+	{
+		pthread_mutex_lock(&info->monitor_mx);
+		if (info->n_must_eat && info->n_of_phils == info->phils_done)
+		{
+			pthread_mutex_unlock(&info->monitor_mx);
+			printf("%s%llu %s", GREEN, current_time(info), SUCCESS);
+			break ;
+		}
+		pthread_mutex_unlock(&info->monitor_mx);
+		usleep(500);
+	}
 	return (0);
 }
