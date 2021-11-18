@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/17 21:20:04 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/18 15:53:32 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	philo_life(t_philo *philo)
 			break ;
 		if (!philo_sleeps(philo))
 			break ;
-		if (done_eating(philo))
+		if (philo->info->n_must_eat && done_eating(philo))
 			break ;
 		if (!(philo->name % 2) && !philo_thinks(philo, philo->time_of_death - current_time(philo->info))) //think if even
 			break ;

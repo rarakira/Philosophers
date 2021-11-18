@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 18:03:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/17 21:03:01 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/18 15:50:46 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int	get_left_fork(t_philo *philo)
 		{
 			philo->left_f->is_avail = 0;
 			pthread_mutex_unlock(&philo->left_f->mx);
-			pthread_mutex_lock(&philo->info->print_mx);
+			//pthread_mutex_lock(&philo->info->print_mx);
 			printf("%s%llu %d %s", GREEN, current_time(philo->info), philo->name, FORK);
-			pthread_mutex_unlock(&philo->info->print_mx);
+			//pthread_mutex_unlock(&philo->info->print_mx);
 			return (1);
 		}
 		pthread_mutex_unlock(&philo->left_f->mx);
@@ -72,15 +72,15 @@ int	philo_eats(t_philo *philo)
 		return (set_philo_dead(philo));
 	if (still_alife(philo))
 	{
-		pthread_mutex_lock(&philo->info->print_mx);
+		//pthread_mutex_lock(&philo->info->print_mx);
 		if (!feast_lasts(philo->info))
 		{
-			pthread_mutex_unlock(&philo->info->print_mx);
+			//pthread_mutex_unlock(&philo->info->print_mx);
 			return (0);
 		}
 		printf("%s%llu %d %s", GREEN, philo->last_ate, philo->name, FORK);
 		printf("%s%llu %d %s", YELL, philo->last_ate, philo->name, EATING);
-		pthread_mutex_unlock(&philo->info->print_mx);
+		//pthread_mutex_unlock(&philo->info->print_mx);
 	}
 	else
 		return (set_philo_dead(philo));

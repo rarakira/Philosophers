@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 14:01:11 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/05 15:18:12 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/18 15:33:35 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 size_t	ft_strlen(const char *str)
 {
-		size_t	count;
+	size_t	count;
 
-		count = 0;
-		while (str[count] != '\0')
-				count++;
-		return (count);
+	count = 0;
+	while (str[count] != '\0')
+		count++;
+	return (count);
 }
 
 int	ft_isdigit(int c)

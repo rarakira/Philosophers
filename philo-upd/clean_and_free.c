@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:20:12 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/17 20:34:58 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/18 15:34:30 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	clean_all(t_info *info)
 	clean_f_mxs(info->n_of_phils, info->forks);
 	clean_p_mxs(info->n_of_phils, info->philos);
 	while (pthread_mutex_destroy(&info->monitor_mx))
-			usleep(100);
+		usleep(100);
 	if (pthread_mutex_destroy(&info->print_mx) != 0) // ?
 	{
 		pthread_mutex_unlock(&info->print_mx);
