@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/18 15:41:20 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/19 15:01:36 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	parse_args(t_info *info, char **argv, int argc)
 {
 	if (!valid_args(argv, argc))
 	{
-		printer(MSG_FORMAT);
+		write(1, MSG_FORMAT, ft_strlen(MSG_FORMAT));
 		return (0);
 	}
 	memset(info, 0, sizeof(t_info));
@@ -56,7 +56,7 @@ static int	malloc_arrays(t_info *info)
 	info->forks = (t_fork *)malloc(sizeof(t_fork) * (info->n_of_phils));
 	if (info->forks == NULL)
 	{
-		printer(MSG_MEM);
+		write(1, MSG_MEM, ft_strlen(MSG_MEM));
 		return (0);
 	}
 	memset(info->forks, 0, sizeof(t_fork) * (info->n_of_phils));
@@ -64,10 +64,10 @@ static int	malloc_arrays(t_info *info)
 	if (info->philos == NULL)
 	{
 		free(info->forks);
-		printer(MSG_MEM);
+		write(1, MSG_MEM, ft_strlen(MSG_MEM));
 		return (0);
 	}
-	memset(info->philos, 0, sizeof(t_fork) * (info->n_of_phils));
+	memset(info->philos, 0, sizeof(t_philo) * (info->n_of_phils));
 	return (1);
 }
 
@@ -108,7 +108,7 @@ int	main(int argc, char **argv)
 			return (1);
 		if (!init_mxs(&info))
 		{
-			printer(MSG_MUTEX);
+			write(1, MSG_MUTEX, ft_strlen(MSG_MUTEX));
 			return (1);
 		}
 		if (!create_philos(&info.philos, &info))
@@ -118,6 +118,6 @@ int	main(int argc, char **argv)
 		clean_all(&info);
 	}
 	else
-		printer(MSG_NARGS);
+		write(1, MSG_NARGS, ft_strlen(MSG_NARGS));
 	return (0);
 }

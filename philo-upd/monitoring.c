@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:14:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/18 15:44:38 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/19 11:48:03 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	set_monitoring(t_philo **philos, t_info *info)
 			break ;
 		}
 		pthread_mutex_unlock(&info->monitor_mx);
-		usleep(500);
+		usleep(1000);
 	}
 	return (0);
 }

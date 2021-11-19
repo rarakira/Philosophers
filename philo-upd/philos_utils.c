@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:10:34 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/17 21:32:58 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/19 15:20:55 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,7 @@ unsigned long long	current_time(t_info *info)
 	unsigned long long	res;
 	struct timeval		current;
 
-	if (gettimeofday(&current, NULL) == -1)
-	{
-		printer(MSG_TIMEERR);
-		//free all;
-		exit (1); // exit forbidden !
-	}
+	gettimeofday(&current, NULL);
 	res = (current.tv_sec - info->era_start.tv_sec) * 1000;
 	res += (current.tv_usec - info->era_start.tv_usec) / 1000;
 	return (res);
@@ -59,7 +54,7 @@ int	still_alife(t_philo *philo)
 	return (0);
 }
 
-int	set_philo_dead(t_philo *philo) // might need to look into order, do we need "philo->is_dead = 1"?
+int	set_philo_dead(t_philo *philo)
 {
 	if (still_alife(philo) || !feast_lasts(philo->info))
 		return (0);
@@ -67,11 +62,9 @@ int	set_philo_dead(t_philo *philo) // might need to look into order, do we need 
 	pthread_mutex_lock(&philo->mx);
 	philo->is_dead = 1;
 	pthread_mutex_unlock(&philo->mx);
-	pthread_mutex_lock(&philo->info->print_mx);
-	printf("from philo:\n");
-	printf("%sCurrent time: %llu %d \n", RED, current_time(philo->info), philo->name);
-	printf("Last eat: %llu, time to eat: %d, time to sleep: %d, time to die: %d\n", philo->last_ate, philo->info->time_to_eat, philo->info->time_to_sleep, philo->info->time_to_die);
-	printf("%s%llu %d %s", RED, philo->time_of_death, philo->name, DEATH);
-	pthread_mutex_unlock(&philo->info->print_mx);
+	// printf("from philo:\n");
+	printer(philo, philo->time_of_death, CDEATH, LEN_DEATH); // remove later:
+	// printf("%sCurrent time: %llu %d \n", RED, current_time(philo->info), philo->name);
+	// printf("Last eat: %llu, time to eat: %d, time to sleep: %d, time to die: %d\n", philo->last_ate, philo->info->time_to_eat, philo->info->time_to_sleep, philo->info->time_to_die);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/18 15:53:32 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/19 14:48:28 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	philo_life(t_philo *philo)
 {
-	while (feast_lasts(philo->info))
+	while (!philo->last_ate || feast_lasts(philo->info))
 	{
-		if (philo->name % 2 && !philo_thinks(philo, philo->time_of_death - current_time(philo->info))) //think if odd
+		if (philo->name % 2 && !philo_thinks(philo)) //think if odd ??? philo->time_of_death - current_time(philo->info)
 			break ;
 		if (!philo_eats(philo))
 			break ;
@@ -24,7 +24,7 @@ void	philo_life(t_philo *philo)
 			break ;
 		if (philo->info->n_must_eat && done_eating(philo))
 			break ;
-		if (!(philo->name % 2) && !philo_thinks(philo, philo->time_of_death - current_time(philo->info))) //think if even
+		if (!(philo->name % 2) && !philo_thinks(philo)) //think if even
 			break ;
 	}
 }
@@ -42,7 +42,7 @@ static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 		philo->right_f = &info->forks[i + 1];
 	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life, (void *)philo) != 0)
 	{
-		printer(MSG_THREAD);
+		write(1, MSG_THREAD, ft_strlen(MSG_THREAD));
 		return (0);
 	}
 	pthread_detach(philo->t_id);
@@ -57,7 +57,7 @@ int	create_philos(t_philo **phils, t_info *info)
 	if (gettimeofday(&info->era_start, NULL) == -1)
 	{
 		clean_all(info);
-		printer(MSG_TIMEERR);
+		write(1, MSG_TIMEERR, ft_strlen(MSG_TIMEERR));
 		return (0);
 	}
 	while (i < info->n_of_phils)
