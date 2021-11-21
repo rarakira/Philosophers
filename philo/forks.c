@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   monitoring.c                                       :+:      :+:    :+:   */
+/*   forks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/10 13:14:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/20 11:40:54 by lbaela           ###   ########.fr       */
+/*   Created: 2021/11/16 15:17:01 by lbaela            #+#    #+#             */
+/*   Updated: 2021/11/17 20:33:59 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	set_monitoring(t_philo **philos, t_info *info)
+int	create_forks(t_fork **forks, t_info *info)
 {
-	(void) philos;
-	while (feast_lasts(info))
+	unsigned int	i;
+
+	i = 0;
+	while (i < info->n_of_phils)
 	{
-		pthread_mutex_lock(&info->monitor_mx);
-		if (info->n_must_eat && info->n_of_phils == info->phils_done)
+		(*forks + i)->is_avail = 1;
+		if (pthread_mutex_init(&(*forks + i)->mx, NULL) != 0)
 		{
-			pthread_mutex_unlock(&info->monitor_mx);
-			printf("%s%llu %s", GREEN, current_time(info), SUCCESS);
-			break ;
+			clean_f_mxs(i, *forks);
+			//clean_f_mxs(i, *forks);
+			return (0);
 		}
-		pthread_mutex_unlock(&info->monitor_mx);
-		usleep(500);
+		i++;
 	}
-	return (0);
+	return (1);
 }

@@ -6,71 +6,45 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/16 14:48:30 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/21 13:26:32 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-unsigned long long	current_time(t_info *info)
+int	set_philo_dead(t_philo *philo)
 {
-	unsigned long long	res;
-	struct timeval		current;
-
-	if (gettimeofday(&current, NULL) == -1)
-	{
-		printer(MSG_TIMEERR);
-		//free all;
-		exit (1);
-	}
-	res = (current.tv_sec - info->era_start.tv_sec) * 1000;
-	res += (current.tv_usec - info->era_start.tv_usec) / 1000;
-	return (res);
+	if (still_alife(philo) || !feast_lasts(philo->info))
+		return (0);
+	end_feast(philo->info);
+	philo->is_dead = 1;
+	// print_death(philo, current_time(philo->info), CDEATH, LEN_DEATH);
+	printf("%sMessage time: %llu%s\n", RED, current_time(philo->info), END);
+	print_death(philo, philo->time_of_death, CDEATH, LEN_DEATH);
+	return (0);
 }
 
 void	philo_life(t_philo *philo)
 {
-	unsigned long long	time_left;
-
-	while (!philo->is_dead && !philo->info->g_death)
+	while (1)
 	{
-		time_left = philo->time_of_death - current_time(philo->info);
-		//think if odd
-		if (philo->name % 2 && time_left > (unsigned long long)philo->info->time_to_eat)
-			philo_thinks(philo, time_left);
-		else if (philo->name % 2)
-			philo_thinks(philo, 1);
-		//eat
-		if (philo_eats(philo) == -1)
+		if (!philo_eats(philo))
 			break ;
-		//sleep
-		philo_sleeps(philo);
-		//set finish
-		if (philo->times_ate == philo->info->n_must_eat)
-		{
-			pthread_mutex_lock(&philo->info->monitor_mx);
-			philo->info->phils_done++;
-			pthread_mutex_unlock(&philo->info->monitor_mx);
-			printf("%lld Philo %d has finished eating\n", current_time(philo->info), philo->name);
+		if (!philo_sleeps(philo))
 			break ;
-		}
-		time_left = philo->time_of_death - current_time(philo->info);
-		//think if even
-		if (philo->name % 2 == 0 && time_left > (unsigned long long)philo->info->time_to_eat)
-			philo_thinks(philo, time_left);
-		else if (philo->name % 2 == 0)
-			philo_thinks(philo, 1);
+		if (philo->info->n_must_eat && done_eating(philo))
+			break ;
+		if (!philo_thinks(philo))
+			break ;
 	}
 }
 
-int	init_philo(unsigned int i, t_philo *philo, t_info *info)
+static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 {
-	//printf("Create philo %d\n", i + 1);
 	philo->info = info;
-	philo->is_dead = 0;
 	philo->name = i + 1;
-	philo->times_ate = 0;
-	philo->last_ate = 0;
+	if (i % 2)
+		philo->leftie = 1;
 	philo->time_of_death = info->time_to_die;
 	philo->left_f = &info->forks[i];
 	if (i == info->n_of_phils - 1)
@@ -79,8 +53,7 @@ int	init_philo(unsigned int i, t_philo *philo, t_info *info)
 		philo->right_f = &info->forks[i + 1];
 	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life, (void *)philo) != 0)
 	{
-		//free
-		printer(MSG_THREAD);
+		write(1, MSG_THREAD, ft_strlen(MSG_THREAD));
 		return (0);
 	}
 	pthread_detach(philo->t_id);
@@ -92,56 +65,35 @@ int	create_philos(t_philo **phils, t_info *info)
 	unsigned int	i;
 
 	i = 0;
-	*phils = (t_philo *)malloc(sizeof(t_philo) * (info->n_of_phils));
-	if (*phils == NULL)
-	{
-		printer(MSG_MEM);
-		return (0);
-	}
 	if (gettimeofday(&info->era_start, NULL) == -1)
 	{
-		printer(MSG_TIMEERR);
+		clean_all(info);
+		write(1, MSG_TIMEERR, ft_strlen(MSG_TIMEERR));
 		return (0);
 	}
 	while (i < info->n_of_phils)
 	{
-		if (!init_philo(i, (*phils + i), info))
+		if (!set_philo(i, (*phils + i), info))
+		{
+			end_feast(info);
+			wait_for_threads(info->philos, i);
+			clean_all(info);
 			return (0);
-		i++;
-	}
-	return (1);
-}
-
-/*
-int	create_philos(t_philo **phils, t_info *info)
-{
-	unsigned int	i;
-
-	i = 0;
-	*phils = (t_philo *)malloc(sizeof(t_philo) * (info->n_of_phils));
-	if (*phils == NULL)
-	{
-		printer(MSG_MEM);
-		return (0);
-	}
-	while (i < info->n_of_phils)
-	{
-		if (!init_philo(i, (*phils + i), info))
-			return (0);
+		}
 		i += 2;
 	}
-	usleep(1000);
+	usleep(50);
 	i = 1;
 	while (i < info->n_of_phils)
 	{
-		if (!init_philo(i, (*phils + i), info))
+		if (!set_philo(i, (*phils + i), info))
+		{
+			end_feast(info);
+			wait_for_threads(info->philos, i);
+			clean_all(info);
 			return (0);
+		}
 		i += 2;
 	}
 	return (1);
-} */
-
-/*
-while (pthread_mutex_lock(philo->left_f) != 0)
-	printf("ERROR(%d): L_FORK MX is unavail\n", philo->name);
-*/
+}

@@ -6,20 +6,43 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:20:12 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/15 19:59:47 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/21 12:41:13 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	clean_forks(int n, t_fork *forks)
+void	wait_for_threads(t_philo *philos, int n)
 {
 	int	i;
 
 	i = 0;
 	while (i < n)
 	{
-		pthread_mutex_destroy(&(forks + i)->mx);
+		pthread_join((philos + i)->t_id, NULL);
 		i++;
 	}
+}
+
+void	clean_f_mxs(int n, t_fork *obj)
+{
+	int	i;
+
+	i = 0;
+	while (i < n)
+	{
+		while (pthread_mutex_destroy(&(obj + i)->mx))
+			usleep(100);
+		i++;
+	}
+	free(obj);
+}
+
+void	clean_all(t_info *info)
+{
+	clean_f_mxs(info->n_of_phils, info->forks);
+	while (pthread_mutex_destroy(&info->monitor_mx))
+		usleep(100);
+	while (pthread_mutex_destroy(&info->print_mx))
+		usleep(100);
 }
