@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:17:05 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/21 14:00:47 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/22 18:00:09 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ int	printer(t_philo *philo, unsigned long long time, char *msg, int len)
 	size_t	i;
 
 	i = 0;
+	if (!feast_lasts(philo->info))
+		return (0);
 	memset(message, ' ', BUFFSIZE);
 	i += (ft_itoa_mem(message, time) + 1);
 	i += (ft_itoa_mem(&message[i], (unsigned long long) philo->name) + 1);

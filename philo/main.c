@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/21 12:41:48 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/22 17:30:02 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int	main(int argc, char **argv)
 		if (!create_philos(&info.philos, &info))
 			return (1);
 		set_monitoring(&info.philos, &info);
-		wait_for_threads(info.philos, info.n_of_phils);
+		//wait_for_threads(info.philos, info.n_of_phils);
 		clean_all(&info);
 	}
 	else

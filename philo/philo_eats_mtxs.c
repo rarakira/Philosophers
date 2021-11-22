@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_eats.c                                       :+:      :+:    :+:   */
+/*   philo_eats_mtxs.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 18:03:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/22 18:17:56 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/11/22 18:04:42 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,7 @@
 
 static inline int	return_forks(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->right_f->mx);
-	philo->right_f->is_avail = 1;
 	pthread_mutex_unlock(&philo->right_f->mx);
-	pthread_mutex_lock(&philo->left_f->mx);
-	philo->left_f->is_avail = 1;
 	pthread_mutex_unlock(&philo->left_f->mx);
 	return (1);
 }
@@ -29,64 +25,66 @@ static inline int	update_last_ate(t_philo *philo)
 	philo->time_of_death = philo->last_ate + philo->info->time_to_die;
 	philo->times_ate++;
 	if (!printer(philo, current_time(philo->info), CFORK, LEN_FORK) || !printer(philo, current_time(philo->info), CEATING, LEN_EATING))
+	{
+		return_forks(philo);
 		return (0);
+	}
 	return (1);
 }
 
 static inline int	get_left_fork(t_philo *philo)
 {
-	while (1)
+	pthread_mutex_lock(&philo->left_f->mx);
+	if (!still_alife(philo))
 	{
-		pthread_mutex_lock(&philo->left_f->mx);
-		if (!still_alife(philo))
-		{
-			pthread_mutex_unlock(&philo->left_f->mx);
-			return (set_philo_dead(philo));
-		}
-		if (!philo->left_f->is_avail)
-		{
-			pthread_mutex_unlock(&philo->left_f->mx);
-			usleep(50);
-			continue ;
-		}
-		philo->left_f->is_avail = 0;
-		pthread_mutex_unlock(&philo->left_f->mx);
 		if (!philo->leftie)
-			return (update_last_ate(philo));
+			return_forks(philo);
 		else
-			return (printer(philo, current_time(philo->info), CFORK, LEN_FORK));
+			pthread_mutex_unlock(&philo->left_f->mx);
+		return (set_philo_dead(philo));
 	}
+	if (!philo->leftie)
+		return (update_last_ate(philo));
+	else
+	{
+		if (!printer(philo, current_time(philo->info), CFORK, LEN_FORK))
+		{
+			pthread_mutex_unlock(&philo->left_f->mx);
+			return (0);
+		}
+	}
+	return (1);
 }
 
 static inline int	get_right_fork(t_philo *philo)
 {
-	while (1)
+	pthread_mutex_lock(&philo->right_f->mx);
+	if (!still_alife(philo))
 	{
-		pthread_mutex_lock(&philo->right_f->mx);
-		if (!still_alife(philo))
-		{
-			pthread_mutex_unlock(&philo->right_f->mx);
-			return (set_philo_dead(philo));
-		}
-		if (!philo->right_f->is_avail)
-		{
-			pthread_mutex_unlock(&philo->right_f->mx);
-			usleep(50);
-			continue ;
-		}
-		philo->right_f->is_avail = 0;
-		pthread_mutex_unlock(&philo->right_f->mx);
 		if (philo->leftie)
-			return (update_last_ate(philo));
+			return_forks(philo);
 		else
-			return (printer(philo, current_time(philo->info), CFORK, LEN_FORK));
+			pthread_mutex_unlock(&philo->right_f->mx);
+		return (set_philo_dead(philo));
 	}
+	if (philo->leftie)
+		return (update_last_ate(philo));
+	else
+	{
+		if (!printer(philo, current_time(philo->info), CFORK, LEN_FORK))
+		{
+			pthread_mutex_unlock(&philo->right_f->mx);
+			return (0);
+		}
+	}
+	return (1);
 }
 
 static inline int	is_alone(t_philo *philo)
 {
 	if (philo->left_f == philo->right_f)
 	{
+		pthread_mutex_unlock(&philo->left_f->mx);
 		ft_sleep(philo->time_of_death, philo->info);
 		return (1);
 	}
