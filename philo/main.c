@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/22 17:30:02 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/02 17:20:27 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	parse_args(t_info *info, char **argv, int argc)
 {
 	if (!valid_args(argv, argc))
 	{
-		write(1, MSG_FORMAT, ft_strlen(MSG_FORMAT));
+		write(2, MSG_FORMAT, ft_strlen(MSG_FORMAT));
 		return (0);
 	}
 	memset(info, 0, sizeof(t_info));
@@ -56,7 +56,7 @@ static int	malloc_arrays(t_info *info)
 	info->forks = (t_fork *)malloc(sizeof(t_fork) * (info->n_of_phils));
 	if (info->forks == NULL)
 	{
-		write(1, MSG_MEM, ft_strlen(MSG_MEM));
+		write(2, MSG_MEM, ft_strlen(MSG_MEM));
 		return (0);
 	}
 	memset(info->forks, 0, sizeof(t_fork) * (info->n_of_phils));
@@ -64,7 +64,7 @@ static int	malloc_arrays(t_info *info)
 	if (info->philos == NULL)
 	{
 		free(info->forks);
-		write(1, MSG_MEM, ft_strlen(MSG_MEM));
+		write(2, MSG_MEM, ft_strlen(MSG_MEM));
 		return (0);
 	}
 	memset(info->philos, 0, sizeof(t_philo) * (info->n_of_phils));
@@ -92,7 +92,9 @@ static int	init_mxs(t_info *info)
 int	main(int argc, char **argv)
 {
 	t_info	info;
+	int		res;
 
+	res = 1;
 	if (argc == 5 || argc == 6)
 	{
 		if (!parse_args(&info, argv, argc))
@@ -101,16 +103,16 @@ int	main(int argc, char **argv)
 			return (1);
 		if (!init_mxs(&info))
 		{
-			write(1, MSG_MUTEX, ft_strlen(MSG_MUTEX));
+			write(2, MSG_MUTEX, ft_strlen(MSG_MUTEX));
 			return (1);
 		}
 		if (!create_philos(&info.philos, &info))
 			return (1);
-		set_monitoring(&info.philos, &info);
+		res = set_monitoring(&info.philos, &info);
 		//wait_for_threads(info.philos, info.n_of_phils);
 		clean_all(&info);
 	}
 	else
-		write(1, MSG_NARGS, ft_strlen(MSG_NARGS));
-	return (0);
+		write(2, MSG_NARGS, ft_strlen(MSG_NARGS));
+	return (res);
 }
