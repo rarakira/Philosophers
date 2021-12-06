@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:20:12 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/22 14:40:08 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/06 13:56:43 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	clean_f_mxs(int n, t_fork *obj)
 void	clean_all(t_info *info)
 {
 	clean_f_mxs(info->n_of_phils, info->forks);
+	free(info->philos);
 	printf("monitor_mx_destroy return: %d\n", pthread_mutex_destroy(&info->monitor_mx));
 	printf("print_mx_destroy return: %d\n", pthread_mutex_destroy(&info->print_mx));
 	// while (pthread_mutex_destroy(&info->monitor_mx))

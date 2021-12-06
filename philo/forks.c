@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/16 15:17:01 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/17 20:33:59 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/06 13:34:51 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	create_forks(t_fork **forks, t_info *info)
 		if (pthread_mutex_init(&(*forks + i)->mx, NULL) != 0)
 		{
 			clean_f_mxs(i, *forks);
-			//clean_f_mxs(i, *forks);
 			return (0);
 		}
 		i++;

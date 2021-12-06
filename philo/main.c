@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/02 17:20:27 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/06 13:35:30 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,13 @@ static int	malloc_arrays(t_info *info)
 static int	init_mxs(t_info *info)
 {
 	if (!create_forks(&info->forks, info))
+	{
+		free(info->philos);
 		return (0);
+	}
 	if (pthread_mutex_init(&info->print_mx, NULL) != 0)
 	{
+		free(info->philos);
 		clean_f_mxs(info->n_of_phils, info->forks);
 		return (0);
 	}
@@ -84,6 +88,7 @@ static int	init_mxs(t_info *info)
 	{
 		pthread_mutex_destroy(&info->print_mx);
 		clean_f_mxs(info->n_of_phils, info->forks);
+		free(info->philos);
 		return (0);
 	}
 	return (1);
