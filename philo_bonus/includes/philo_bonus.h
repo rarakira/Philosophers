@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 11:39:30 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/07 20:20:42 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/08 16:42:05 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ struct					s_info
 /* philosephers functions */
 int					set_monitoring(t_philo **philos, t_info *info);
 int					init_philos(t_philo **philos, t_info *info);
-int					create_forks(sem_t *forks, t_info *info);
+int					create_forks(sem_t **forks, t_info *info);
 int					create_philos(t_philo **phils, t_info *info);
 
 int					philo_eats(t_philo *philo);

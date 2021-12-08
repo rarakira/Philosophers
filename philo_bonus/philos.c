@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/07 20:13:47 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/08 17:08:56 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int	set_philo_dead(t_philo *philo)
 
 void	philo_life(t_philo *philo)
 {
-	printf("Philo %d sat at the table!\n", philo->name);
 	while (1)
 	{
 		if (!philo_eats(philo))
@@ -30,14 +29,10 @@ void	philo_life(t_philo *philo)
 		if (!philo_sleeps(philo))
 			break ;
 		if (philo->info->n_must_eat && done_eating(philo))
-		{
-			printf("Philo %d exiting with code 0\n", philo->name);
 			exit (0);
-		}
 		if (!philo_thinks(philo))
 			break ;
 	}
-	printf("Philo %d exiting with code 1\n", philo->name);
 	exit (1);
 }
 
