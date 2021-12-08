@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 16:25:27 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/07 20:23:10 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,21 +65,24 @@ static int	malloc_arrays(t_info *info)
 
 static int	init_sems(t_info *info)
 {
-	if (!create_forks(&info->forks, info))
+	if (!create_forks(info->forks, info))
 		return (0);
-	if (pthread_mutex_init(&info->print_mx, NULL) != 0)
+	info->print = sem_open("/print_sem", O_CREAT | O_EXCL, 0644, 1);
+	if (info->print == SEM_FAILED)
+		return (0);
+	info->table = sem_open("/table_sem", O_CREAT | O_EXCL, 0644, 1);
+	if (info->table == SEM_FAILED)
+		return (0);
+	if (sem_unlink("/print_sem") == -1 || sem_unlink("/table_sem") == -1)
 	{
+		printf("Could not unlink the semaphore\n");
 		sem_close(info->forks);
+		sem_close(info->print);
+		sem_close(info->table);
 		free(info->philos);
 		return (0);
 	}
-	if (pthread_mutex_init(&info->monitor_mx, NULL) != 0)
-	{
-		pthread_mutex_destroy(&info->print_mx);
-		sem_close(info->forks);
-		free(info->philos);
-		return (0);
-	}
+	printf("All semaphors created!\n");
 	return (1);
 }
 

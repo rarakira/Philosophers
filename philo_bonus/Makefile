@@ -5,8 +5,7 @@ SRCS		=	main.c				forks.c				\
 				philo_activities.c	monitoring.c		\
 				clean_and_free.c	lib.c
 
-CUSTOM		=	philo_eats.c		philo_eats_mtxs.c	\
-				print_msgs.c		printf_msgs.c		\
+CUSTOM		=	philo_eats.c		printf_msgs.c		\
 				print_buff_msgs.c						\
 
 OBJS		=	$(SRCS:.c=.o)
@@ -29,14 +28,6 @@ $(NAME) : $(OBJS) $(OBJS_CUSTOM)
 # printf printer, forks with status #
 printf : $(OBJS) $(OBJS_CUSTOM)
 		$(CC) $(OBJS) printf_msgs.o philo_eats.o -o $(NAME)
-
-# buffered printer, forks-mtxs #
-buff_mxs : $(OBJS) $(OBJS_CUSTOM)
-		$(CC) $(OBJS) print_buff_msgs.o philo_eats_mtxs.o -o $(NAME)
-
-# printf printer, forks-mtxs #
-printf_mxs : $(OBJS) $(OBJS_CUSTOM)
-		$(CC) $(OBJS) printf_msgs.o philo_eats_mtxs.o -o $(NAME)
 
 putnbr : $(OBJS) $(OBJS_CUSTOM)
 		$(CC) $(OBJS) print_msgs.o philo_eats.o -o $(NAME)

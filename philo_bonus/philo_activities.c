@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 18:40:41 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 11:41:49 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/07 19:12:47 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ int	philo_thinks(t_philo *philo)
 {
 	unsigned long long	since_last_meal;
 
-	if (!printer(philo, current_time(philo->info), CTHINKING, LEN_THINKING))
-		return (0);
+	printer(philo, current_time(philo->info), CTHINKING, LEN_THINKING);
 	//thinking = (philo->time_of_death - current_time(philo->info));
 	since_last_meal = (current_time(philo->info) - philo->last_ate);
 	// printf("Time since food: %llu, life span 40%%: %u\n", current, philo->info->time_to_die / 10 * 4);
@@ -31,8 +30,7 @@ int	philo_sleeps(t_philo *philo)
 	unsigned long long	started_sleeping;
 
 	started_sleeping = current_time(philo->info);
-	if (!printer(philo, started_sleeping, CSLEEPING, LEN_SLEEPING))
-		return (0);
+	printer(philo, started_sleeping, CSLEEPING, LEN_SLEEPING);
 	if (started_sleeping + philo->info->time_to_sleep >= philo->time_of_death)
 	{
 		ft_sleep(philo->time_of_death, philo->info);
@@ -46,12 +44,6 @@ int	philo_sleeps(t_philo *philo)
 int	done_eating(t_philo *philo)
 {
 	if (philo->times_ate == philo->info->n_must_eat)
-	{
-		pthread_mutex_lock(&philo->info->monitor_mx);
-		philo->info->phils_done++;
-		pthread_mutex_unlock(&philo->info->monitor_mx);
-		// printf("%lld Philo %d has finished eating\n", current_time(philo->info), philo->name); // delete later
 		return (1);
-	}
 	return (0);
 }

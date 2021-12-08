@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 18:03:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 11:41:49 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/07 20:22:24 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,9 @@
 
 static inline int	return_forks(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->right_f->mx);
-	philo->right_f->is_avail = 1;
-	pthread_mutex_unlock(&philo->right_f->mx);
-	pthread_mutex_lock(&philo->left_f->mx);
-	philo->left_f->is_avail = 1;
-	pthread_mutex_unlock(&philo->left_f->mx);
+	sem_post(philo->info->forks);
+	sem_post(philo->info->forks);
+	printf("Philo %d returned forks\n", philo->name);
 	return (1);
 }
 
@@ -28,83 +25,79 @@ static inline int	update_last_ate(t_philo *philo)
 	philo->last_ate = current_time(philo->info);
 	philo->time_of_death = philo->last_ate + philo->info->time_to_die;
 	philo->times_ate++;
-	if (!printer(philo, current_time(philo->info), CFORK, LEN_FORK) || !printer(philo, current_time(philo->info), CEATING, LEN_EATING))
-		return (0);
+	printer(philo, current_time(philo->info), CFORK, LEN_FORK);
+	printer(philo, current_time(philo->info), CEATING, LEN_EATING);
 	return (1);
 }
 
-static inline int	get_left_fork(t_philo *philo)
+static inline int	get_forks(t_philo *philo)
 {
-	while (1)
+	sem_wait(philo->info->table);
+	if (!sem_wait(philo->info->forks))
 	{
-		pthread_mutex_lock(&philo->left_f->mx);
+		printf("Philo %d got a 1st fork\n", philo->name);
 		if (!still_alife(philo))
-		{
-			pthread_mutex_unlock(&philo->left_f->mx);
-			return (set_philo_dead(philo));
-		}
-		if (!philo->left_f->is_avail)
-		{
-			pthread_mutex_unlock(&philo->left_f->mx);
-			usleep(50);
-			continue ;
-		}
-		philo->left_f->is_avail = 0;
-		pthread_mutex_unlock(&philo->left_f->mx);
-		if (!philo->leftie)
-			return (update_last_ate(philo));
-		else
-			return (printer(philo, current_time(philo->info), CFORK, LEN_FORK));
-	}
-}
-
-static inline int	get_right_fork(t_philo *philo)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&philo->right_f->mx);
-		if (!still_alife(philo))
-		{
-			pthread_mutex_unlock(&philo->right_f->mx);
-			return (set_philo_dead(philo));
-		}
-		if (!philo->right_f->is_avail)
-		{
-			pthread_mutex_unlock(&philo->right_f->mx);
-			usleep(50);
-			continue ;
-		}
-		philo->right_f->is_avail = 0;
-		pthread_mutex_unlock(&philo->right_f->mx);
-		if (philo->leftie)
-			return (update_last_ate(philo));
-		else
-			return (printer(philo, current_time(philo->info), CFORK, LEN_FORK));
-	}
-}
-
-static inline int	is_alone(t_philo *philo)
-{
-	if (philo->left_f == philo->right_f)
-	{
-		ft_sleep(philo->time_of_death, philo->info);
-		return (1);
-	}
-	return (0);
-}
-
-int	philo_eats(t_philo *philo)
-{
-	if (philo->leftie)
-	{
-		if (!get_left_fork(philo) || !get_right_fork(philo))
 			return (set_philo_dead(philo));
 	}
 	else
 	{
-		if (!get_right_fork(philo) || is_alone(philo) || !get_left_fork(philo))
+		if (errno == EAGAIN)
+		{
+			printf("Philo %d could not obtain a fork. Exit (1)\n", philo->name);
+			printf("The semaphore is already locked\n");
+			exit (1);
+		}
+		if (errno == EDEADLK)
+		{
+			printf("Philo %d could not obtain a fork. Exit (2)\n", philo->name);
+			printf("A deadlock was detected\n");
+			exit (2);
+		}
+		if (errno == EINTR)
+		{
+			printf("Philo %d could not obtain a fork. Exit (3)\n", philo->name);
+			printf("The call was interrupted by a signal\n");
+			exit (3);
+		}
+	}
+	philo->current = current_time(philo->info);
+	printer(philo, current_time(philo->info), CFORK, LEN_FORK);
+	if (!sem_wait(philo->info->forks))
+	{
+		printf("Philo %d got a 2nd fork\n", philo->name);
+		if (!still_alife(philo))
 			return (set_philo_dead(philo));
 	}
+	else
+	{
+		if (errno == EAGAIN)
+		{
+			printf("Philo %d could not obtain a 2nd fork. Exit (1)\n", philo->name);
+			printf("The semaphore is already locked\n");
+			exit (1);
+		}
+		if (errno == EDEADLK)
+		{
+			printf("Philo %d could not obtain a 2nd fork. Exit (2)\n", philo->name);
+			printf("A deadlock was detected\n");
+			exit (2);
+		}
+		if (errno == EINTR)
+		{
+			printf("Philo %d could not obtain a 2nd fork. Exit (3)\n", philo->name);
+			printf("The call was interrupted by a signal\n");
+			exit (3);
+		}
+	}
+	sem_post(philo->info->table);
+	printf("Philo %d updating last_ate\n", philo->name);
+	return (update_last_ate(philo));
+}
+
+int	philo_eats(t_philo *philo)
+{
+	if (!get_forks(philo))
+		return (set_philo_dead(philo));
 	// printf("%d before usleep: %llu\n", philo->name, current_time(philo->info));
 	ft_sleep(philo->last_ate + philo->info->time_to_eat, philo->info);
 	// usleep(philo->info->time_to_eat * 1000);

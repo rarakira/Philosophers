@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 11:39:30 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 17:14:24 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/07 20:20:42 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,11 @@ typedef struct s_info	t_info;
 typedef struct s_philo
 {
 	int					name;
-	int					is_dead;
 	unsigned int		times_ate;
 	unsigned long long	current;
 	unsigned long long	last_ate;
 	unsigned long long	time_of_death;
 	pid_t				pid;
-	int					exit_s;
 	struct s_info		*info;
 }						t_philo;
 
@@ -84,11 +82,10 @@ struct					s_info
 	unsigned int		time_to_sleep;
 	unsigned int		n_must_eat;
 	unsigned int		phils_done;
-	int					feast_ended;
 	struct timeval		era_start;
-	pthread_mutex_t		monitor_mx;
-	pthread_mutex_t		print_mx;
-	sem_t				forks;
+	sem_t				*table;
+	sem_t				*forks;
+	sem_t				*print;
 	t_philo				*philos;
 };
 

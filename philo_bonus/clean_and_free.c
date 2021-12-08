@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:20:12 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 16:05:20 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/07 20:20:23 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,9 @@
 
 void	clean_all(t_info *info)
 {
-	sem_close(info->forks);
+	printf("sem_close(Forks) return: %d\n", sem_close(info->forks));
 	free(info->philos);
-	printf("monitor_mx_destroy return: %d\n", pthread_mutex_destroy(&info->monitor_mx));
-	printf("print_mx_destroy return: %d\n", pthread_mutex_destroy(&info->print_mx));
-	// while (pthread_mutex_destroy(&info->monitor_mx))
-	// 	usleep(100);
-	// while (pthread_mutex_destroy(&info->print_mx))
-	// 	usleep(100);
+	printf("sem_close(Table) return: %d\n", sem_close(info->table));
+	printf("sem_close(Print) return: %d\n", sem_close(info->print));
+	printf("All clean!\n");
 }
