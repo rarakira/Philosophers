@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 17:28:45 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 18:10:04 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,14 +119,14 @@ void				ft_sleep(unsigned long long wake_time, t_info *info);
 void				end_feast(t_info *info);
 int					feast_lasts(t_info *info);
 
-int					printer(t_philo *philo, unsigned long long time, char *msg, int len);
-int					print_death(t_philo *philo, unsigned long long time, char *msg, int len);
+int					printer(t_philo *philo, unsigned long long time,
+						char *msg, int len);
+int					print_death(t_philo *philo, unsigned long long time,
+						char *msg, int len);
 
 /* clean up functions */
 void				clean_f_mxs(int n, t_fork *obj);
 void				clean_all(t_info *info);
-
-void				wait_for_threads(t_philo *philos, int n);
 
 /* libft functions */
 size_t				ft_strlen(const char *str);

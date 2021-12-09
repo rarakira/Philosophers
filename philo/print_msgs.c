@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:17:05 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/20 19:08:59 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 18:07:34 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,24 @@
 
 void	ft_putnbr_fd(unsigned long long	n)
 {
-		unsigned long long	len;
-		unsigned long long	mod;
-		char				ch;
+	unsigned long long	len;
+	unsigned long long	mod;
+	char				ch;
 
-		mod = 10;
-		len = 1;
-		while (n % mod != n)
-		{
-			mod *= 10;
-			len++;
-		}
-		while (mod >= 10)
-		{
-			mod /= 10;
-			ch = (n / mod) + '0';
-			n = n % mod;
-			write(1, &ch, 1);
-		}
+	mod = 10;
+	len = 1;
+	while (n % mod != n)
+	{
+		mod *= 10;
+		len++;
+	}
+	while (mod >= 10)
+	{
+		mod /= 10;
+		ch = (n / mod) + '0';
+		n = n % mod;
+		write(1, &ch, 1);
+	}
 }
 
 int	printer(t_philo *philo, unsigned long long time, char *msg, int len)

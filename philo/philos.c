@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 17:30:00 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 18:06:36 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 		philo->right_f = &info->forks[0];
 	else
 		philo->right_f = &info->forks[i + 1];
-	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life, (void *)philo) != 0)
+	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life,
+			(void *)philo) != 0)
 	{
 		write(1, MSG_THREAD, ft_strlen(MSG_THREAD));
 		return (0);
