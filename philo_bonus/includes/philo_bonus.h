@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 11:39:30 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/08 16:42:05 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 17:59:59 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@
 each argument should be a positive number\n"
 # define MSG_TIMEERR	"Gettimeofday function error\n"
 # define MSG_MEM		"Memory allocation failed\n"
-# define MSG_MUTEX		"Semaphore or mutex creation failed\n"
+# define MSG_SEM		"Semaphore creation failed\n"
+# define MSG_UNLINK		"Could not unlink the semaphore\n"
 # define MSG_THREAD		"Thread creation failed\n"
 
 # define FORK			"has taken a fork\e[0m\n"
@@ -48,24 +49,12 @@ each argument should be a positive number\n"
 # define VIOLT			"\e[1;35m"
 # define END			"\e[0m"
 
-# define CFORK			(GREEN "has taken a fork\e[0m\n")
-# define CEATING		(YELL "is eating\e[0m\n")
-# define CSLEEPING		(BLUE "is sleeping\e[0m\n")
-# define CTHINKING		(VIOLT "is thinking\e[0m\n")
-# define CDEATH			(RED "is dead\e[0m\n")
-
-# define LEN_FORK		28
-# define LEN_EATING		21
-# define LEN_SLEEPING	23
-# define LEN_THINKING	23
-# define LEN_DEATH		19
-
-
 typedef struct s_info	t_info;
 
 typedef struct s_philo
 {
 	int					name;
+	short				single;
 	unsigned int		times_ate;
 	unsigned long long	current;
 	unsigned long long	last_ate;
@@ -110,8 +99,10 @@ void				ft_sleep(unsigned long long wake_time, t_info *info);
 void				end_feast(t_info *info);
 int					feast_lasts(t_info *info);
 
-int					printer(t_philo *philo, unsigned long long time, char *msg, int len);
-int					print_death(t_philo *philo, unsigned long long time, char *msg, int len);
+int					printer(t_philo *philo, unsigned long long time,
+						char *msg, char *col);
+int					print_death(t_philo *philo, unsigned long long time,
+						char *msg, char *col);
 
 /* clean up functions */
 void				clean_all(t_info *info);

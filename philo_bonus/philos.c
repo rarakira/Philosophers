@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/08 17:08:56 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 18:01:09 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 
 int	set_philo_dead(t_philo *philo)
 {
-	// print_death(philo, current_time(philo->info), CDEATH, LEN_DEATH);
-	printf("%sMessage time: %llu%s\n", RED, current_time(philo->info), END);
-	print_death(philo, philo->time_of_death, CDEATH, LEN_DEATH);
+	print_death(philo, philo->time_of_death, DEATH, RED);
 	exit (1);
 }
 
@@ -40,11 +38,14 @@ static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 {
 	philo->info = info;
 	philo->name = i + 1;
+	if (!i && info->n_of_phils == 1)
+		philo->single = 1;
 	philo->time_of_death = info->time_to_die;
 	philo->pid = fork();
 	if (philo->pid < 0)
 	{
-		printf ("SET_PHILO: Fork error on philo creation.\n");
+		printf("An error occured while creating %u'th philo\n", i + 1);
+		printf("Wrapping up program\n");
 		return (0);
 	}
 	else if (philo->pid == 0)
@@ -60,7 +61,6 @@ int	create_philos(t_philo **phils, t_info *info)
 	i = 0;
 	if (gettimeofday(&info->era_start, NULL) == -1)
 	{
-		clean_all(info);
 		write(2, MSG_TIMEERR, ft_strlen(MSG_TIMEERR));
 		return (0);
 	}
@@ -68,14 +68,13 @@ int	create_philos(t_philo **phils, t_info *info)
 	{
 		if (!set_philo(i, (*phils + i), info))
 		{
-			printf("Philo %u creation failed\n", i);
+			sem_wait(info->print);
 			j = 0;
 			while (j < i)
-				kill(phils[j++]->pid, SIGKILL);
+				kill((*phils + j++)->pid, SIGKILL);
 			while (waitpid (-1, NULL, 0))
 				if (errno == ECHILD)
-					break;
-			clean_all(info);
+					break ;
 			return (0);
 		}
 		i++;

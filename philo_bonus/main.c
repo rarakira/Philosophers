@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/08 17:21:42 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 17:14:15 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,24 +67,16 @@ static int	init_sems(t_info *info)
 {
 	if (!create_forks(&info->forks, info))
 		return (0);
-	printf("sem_unlink(Table) return: %d\n", sem_unlink("/tablesem1"));
-	printf("sem_unlink(Print) return: %d\n", sem_unlink("/printsem1"));
-	info->print = sem_open("/printsem1", O_CREAT, S_IRWXU | S_IRWXG, 1);
-	if (info->print == SEM_FAILED)
+	info->print = sem_open("/print_sem", O_CREAT, S_IRWXU | S_IRWXG, 1);
+	info->table = sem_open("/table_sem", O_CREAT, S_IRWXU | S_IRWXG, 1);
+	if (info->table == SEM_FAILED || info->print == SEM_FAILED)
 		return (0);
-	info->table = sem_open("/tablesem1", O_CREAT, S_IRWXU | S_IRWXG, 1);
-	if (info->table == SEM_FAILED)
-		return (0);
-	// if (sem_unlink("/printsem") == -1 || sem_unlink("/tablesem") == -1)
-	// {
-	// 	printf("Could not unlink the semaphore\n");
-	// 	sem_close(info->forks);
-	// 	sem_close(info->print);
-	// 	sem_close(info->table);
-	// 	free(info->philos);
-	// 	return (0);
-	// }
-	printf("All semaphors created!\n");
+	if (sem_unlink("/print_sem") == -1 || sem_unlink("/table_sem") == -1)
+	{
+		write(2, MSG_UNLINK, ft_strlen(MSG_UNLINK));
+		clean_all(info);
+		exit (1);
+	}
 	return (1);
 }
 
@@ -102,12 +94,12 @@ int	main(int argc, char **argv)
 			return (1);
 		if (!init_sems(&info))
 		{
-			write(2, MSG_MUTEX, ft_strlen(MSG_MUTEX));
+			write(2, MSG_SEM, ft_strlen(MSG_SEM));
+			clean_all(&info);
 			return (1);
 		}
-		if (!create_philos(&info.philos, &info))
-			return (1);
-		res = set_monitoring(&info.philos, &info);
+		if (create_philos(&info.philos, &info))
+			res = set_monitoring(&info.philos, &info);
 		clean_all(&info);
 	}
 	else

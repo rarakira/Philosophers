@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/11/22 17:29:54 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 17:30:00 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ int	set_philo_dead(t_philo *philo)
 		return (0);
 	end_feast(philo->info);
 	philo->is_dead = 1;
-	// print_death(philo, current_time(philo->info), CDEATH, LEN_DEATH);
-	printf("%sMessage time: %llu%s\n", RED, current_time(philo->info), END);
 	print_death(philo, philo->time_of_death, CDEATH, LEN_DEATH);
 	return (0);
 }
@@ -76,7 +74,6 @@ int	create_philos(t_philo **phils, t_info *info)
 		if (!set_philo(i, (*phils + i), info))
 		{
 			end_feast(info);
-			// wait_for_threads(info->philos, i);
 			clean_all(info);
 			return (0);
 		}
@@ -89,7 +86,6 @@ int	create_philos(t_philo **phils, t_info *info)
 		if (!set_philo(i, (*phils + i), info))
 		{
 			end_feast(info);
-			// wait_for_threads(info->philos, i);
 			clean_all(info);
 			return (0);
 		}

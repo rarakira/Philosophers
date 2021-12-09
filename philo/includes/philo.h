@@ -6,13 +6,12 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 11:52:30 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 17:28:45 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
-
 
 # include <stddef.h>
 # include <unistd.h>
@@ -57,7 +56,6 @@ each argument should be a positive number\n"
 # define LEN_SLEEPING	23
 # define LEN_THINKING	23
 # define LEN_DEATH		19
-
 
 typedef struct s_info	t_info;
 

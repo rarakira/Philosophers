@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:59:02 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/06 13:35:30 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/09 17:30:04 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ int	main(int argc, char **argv)
 		if (!create_philos(&info.philos, &info))
 			return (1);
 		res = set_monitoring(&info.philos, &info);
-		//wait_for_threads(info.philos, info.n_of_phils);
 		clean_all(&info);
 	}
 	else
