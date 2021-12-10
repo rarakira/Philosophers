@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/10 10:27:02 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 14:10:23 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	set_philo_dead(t_philo *philo)
 		return (0);
 	end_feast(philo->info);
 	philo->is_dead = 1;
-	print_death(philo, philo->time_of_death, CDEATH, LEN_DEATH);
+	print_death(philo, philo->time_of_death, DEATH, RED);
 	return (0);
 }
 
@@ -52,7 +52,7 @@ static inline int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 	if (pthread_create(&philo->t_id, NULL, (void *)&philo_life,
 			(void *)philo) != 0)
 	{
-		write(1, MSG_THREAD, ft_strlen(MSG_THREAD));
+		write(2, MSG_THREAD, ft_strlen(MSG_THREAD));
 		return (0);
 	}
 	pthread_detach(philo->t_id);

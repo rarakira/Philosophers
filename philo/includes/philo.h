@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/10 10:28:58 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 14:11:20 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,6 @@ each argument should be a positive number\n"
 # define BLUE			"\e[1;34m"
 # define VIOLT			"\e[1;35m"
 # define END			"\e[0m"
-
-# define CFORK			"\e[1;32mhas taken a fork\e[0m\n"
-# define CEATING		"\e[1;33mis eating\e[0m\n"
-# define CSLEEPING		"\e[1;34mis sleeping\e[0m\n"
-# define CTHINKING		"\e[1;35mis thinking\e[0m\n"
-# define CDEATH			"\e[1;31mis dead\e[0m\n"
-
-# define LEN_FORK		28
-# define LEN_EATING		21
-# define LEN_SLEEPING	23
-# define LEN_THINKING	23
-# define LEN_DEATH		19
 
 typedef struct s_info	t_info;
 
@@ -120,9 +108,9 @@ void				end_feast(t_info *info);
 int					feast_lasts(t_info *info);
 
 int					printer(t_philo *philo, unsigned long long time,
-						char *msg, int len);
+						char *msg, char *col);
 int					print_death(t_philo *philo, unsigned long long time,
-						char *msg, int len);
+						char *msg, char *col);
 
 /* clean up functions */
 void				clean_f_mxs(int n, t_fork *obj);

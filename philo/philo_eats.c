@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 18:03:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 17:51:42 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 14:09:05 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ static inline int	update_last_ate(t_philo *philo)
 	philo->last_ate = current_time(philo->info);
 	philo->time_of_death = philo->last_ate + philo->info->time_to_die;
 	philo->times_ate++;
-	if (!printer(philo, current_time(philo->info), CFORK, LEN_FORK)
-		|| !printer(philo, current_time(philo->info), CEATING, LEN_EATING))
+	if (!printer(philo, current_time(philo->info), FORK, GREEN)
+		|| !printer(philo, current_time(philo->info), EATING, YELL))
 		return (0);
 	return (1);
 }
@@ -44,7 +44,7 @@ static inline int	get_left_fork(t_philo *philo)
 		if (!philo->leftie)
 			return (update_last_ate(philo));
 		else
-			return (printer(philo, current_time(philo->info), CFORK, LEN_FORK));
+			return (printer(philo, current_time(philo->info), FORK, GREEN));
 	}
 }
 
@@ -69,7 +69,7 @@ static inline int	get_right_fork(t_philo *philo)
 		if (philo->leftie)
 			return (update_last_ate(philo));
 		else
-			return (printer(philo, current_time(philo->info), CFORK, LEN_FORK));
+			return (printer(philo, current_time(philo->info), FORK, GREEN));
 	}
 }
 

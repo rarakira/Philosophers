@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 18:40:41 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 17:47:48 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 14:08:31 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	philo_thinks(t_philo *philo)
 {
 	unsigned long long	since_last_meal;
 
-	if (!printer(philo, current_time(philo->info), CTHINKING, LEN_THINKING))
+	if (!printer(philo, current_time(philo->info), THINKING, VIOLT))
 		return (0);
 	since_last_meal = (current_time(philo->info) - philo->last_ate);
 	if (since_last_meal < philo->info->time_to_die / 3 * 2)
@@ -30,7 +30,7 @@ int	philo_sleeps(t_philo *philo)
 	unsigned long long	started_sleeping;
 
 	started_sleeping = current_time(philo->info);
-	if (!printer(philo, started_sleeping, CSLEEPING, LEN_SLEEPING))
+	if (!printer(philo, started_sleeping, SLEEPING, BLUE))
 		return (0);
 	if (started_sleeping + philo->info->time_to_sleep >= philo->time_of_death)
 	{

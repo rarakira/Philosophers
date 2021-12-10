@@ -4,13 +4,9 @@ SRCS		=	main.c				forks.c				\
 				philos.c			philos_utils.c		\
 				philo_activities.c	philo_eats.c		\
 				clean_and_free.c	monitoring.c		\
-				lib.c
-
-CUSTOM		=	print_msgs.c		printf_msgs.c
-				
+				printf_msgs.c		lib.c		
 
 OBJS		=	$(SRCS:.c=.o)
-OBJS_CUSTOM		=	$(CUSTOM:.c=.o)
 
 INCLUDES	=	-Iincludes
 
@@ -22,13 +18,8 @@ RM			=	rm -f
 
 all : $(NAME)
 
-# buffered printer #
-$(NAME) : $(OBJS) $(OBJS_CUSTOM)
-		$(CC) $(OBJS) print_msgs.o -o $(NAME)
-
-# printf printer #
-printf : $(OBJS) $(OBJS_CUSTOM)
-		$(CC) $(OBJS) printf_msgs.o -o $(NAME)
+$(NAME) : $(OBJS)
+		$(CC) $(OBJS) -o $(NAME)
 
 %.o : %.c includes/philo.h
 		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -37,7 +28,7 @@ norm:
 		@norminette ./*.c includes/*.h
 
 clean:
-		@$(RM) $(OBJS) $(OBJS_CUSTOM)
+		@$(RM) $(OBJS)
 		@echo "\033[1;38;5;221m*  Philo objects removed\033[0m"
 
 fclean:	clean
