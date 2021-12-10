@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 18:06:36 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 10:27:02 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	set_philo_dead(t_philo *philo)
 	return (0);
 }
 
-void	philo_life(t_philo *philo)
+static void	philo_life(t_philo *philo)
 {
 	while (1)
 	{
@@ -37,7 +37,7 @@ void	philo_life(t_philo *philo)
 	}
 }
 
-static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
+static inline int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 {
 	philo->info = info;
 	philo->name = i + 1;
@@ -59,6 +59,23 @@ static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 	return (1);
 }
 
+static inline int	create_half(unsigned int i, t_philo **phils, t_info *info)
+{
+	while (i < info->n_of_phils)
+	{
+		if (!set_philo(i, (*phils + i), info))
+		{
+			end_feast(info);
+			pthread_mutex_lock(&info->print_mx);
+			printf("An error occured while creating %u\'th philo\n", i + 1);
+			clean_all(info);
+			return (0);
+		}
+		i += 2;
+	}
+	return (1);
+}
+
 int	create_philos(t_philo **phils, t_info *info)
 {
 	unsigned int	i;
@@ -67,30 +84,12 @@ int	create_philos(t_philo **phils, t_info *info)
 	if (gettimeofday(&info->era_start, NULL) == -1)
 	{
 		clean_all(info);
-		write(1, MSG_TIMEERR, ft_strlen(MSG_TIMEERR));
+		write(2, MSG_TIMEERR, ft_strlen(MSG_TIMEERR));
 		return (0);
 	}
-	while (i < info->n_of_phils)
-	{
-		if (!set_philo(i, (*phils + i), info))
-		{
-			end_feast(info);
-			clean_all(info);
-			return (0);
-		}
-		i += 2;
-	}
+	if (!create_half(i, phils, info))
+		return (0);
 	usleep(50);
 	i = 1;
-	while (i < info->n_of_phils)
-	{
-		if (!set_philo(i, (*phils + i), info))
-		{
-			end_feast(info);
-			clean_all(info);
-			return (0);
-		}
-		i += 2;
-	}
-	return (1);
+	return (create_half(i, phils, info));
 }

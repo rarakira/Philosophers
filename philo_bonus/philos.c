@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 14:47:48 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 18:01:09 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 10:06:02 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int	set_philo(unsigned int i, t_philo *philo, t_info *info)
 	philo->pid = fork();
 	if (philo->pid < 0)
 	{
-		printf("An error occured while creating %u'th philo\n", i + 1);
+		printf("An error occured while creating %u\'th philo\n", i + 1);
 		printf("Wrapping up program\n");
 		return (0);
 	}

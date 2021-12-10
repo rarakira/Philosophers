@@ -6,7 +6,7 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 11:58:35 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 18:10:04 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 10:28:58 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ each argument should be a positive number\n"
 # define VIOLT			"\e[1;35m"
 # define END			"\e[0m"
 
-# define CFORK			(GREEN "has taken a fork\e[0m\n")
-# define CEATING		(YELL "is eating\e[0m\n")
-# define CSLEEPING		(BLUE "is sleeping\e[0m\n")
-# define CTHINKING		(VIOLT "is thinking\e[0m\n")
-# define CDEATH			(RED "is dead\e[0m\n")
+# define CFORK			"\e[1;32mhas taken a fork\e[0m\n"
+# define CEATING		"\e[1;33mis eating\e[0m\n"
+# define CSLEEPING		"\e[1;34mis sleeping\e[0m\n"
+# define CTHINKING		"\e[1;35mis thinking\e[0m\n"
+# define CDEATH			"\e[1;31mis dead\e[0m\n"
 
 # define LEN_FORK		28
 # define LEN_EATING		21

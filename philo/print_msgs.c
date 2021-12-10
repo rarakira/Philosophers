@@ -6,13 +6,13 @@
 /*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/10 13:17:05 by lbaela            #+#    #+#             */
-/*   Updated: 2021/12/09 18:07:34 by lbaela           ###   ########.fr       */
+/*   Updated: 2021/12/10 10:27:32 by lbaela           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_putnbr_fd(unsigned long long	n)
+void	ft_putnbr_fd(unsigned long long n)
 {
 	unsigned long long	len;
 	unsigned long long	mod;
