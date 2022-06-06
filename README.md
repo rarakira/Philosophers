@@ -1,11 +1,11 @@
 _This is a **21 School/Ecole 42** Project_
 
-# Philosophers
+# 🍴Philosophers
 Solving dining philosophers problem using threads and processes. In computer science, the dining philosophers problem is an example problem often used to illustrate synchronization issues and techniques for resolving them.
 
 ## Project goals
 
-* Introdusing the problem of deadlock
+* Introducing the problem of deadlock
 * Understand the difference between threads and processes
 * Learn about mutexes and semaphores
 
