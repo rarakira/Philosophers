@@ -1,8 +1,0 @@
-{
-	"files.associations": {
-		"philo.h": "c",
-		"time.h": "c",
-		"string.h": "c",
-		"system_error": "c"
-	}
-}
