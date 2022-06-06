@@ -1,7 +1,7 @@
 _This is a **21 School/Ecole 42** Project_
 
-# 🍴Philosophers
-Solving dining philosophers problem using threads and processes. In computer science, the dining philosophers problem is an example problem often used to illustrate synchronization issues and techniques for resolving them.
+# 🍴Philo
+Philo is a program that visualises dining philosophers with status logs in terminal. In computer science, the dining philosophers problem is an example problem often used to illustrate synchronisation issues and techniques for resolving them.
 
 ## Project goals
 
